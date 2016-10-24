@@ -1,9 +1,12 @@
 package server;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.Socket;
+import java.net.SocketException;
+import java.net.SocketTimeoutException;
 import java.util.Date;
 import java.util.HashMap;
 
@@ -33,7 +36,6 @@ public class TCPServerThread extends Thread {
 			BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
 			while (true) {
 				String line = reader.readLine();
-				System.out.println("Client: " + line);
 				logger.append("[INFO] received request \"" + line + "\" from <" + socket.getInetAddress() + '>');
 				String res = null;
 				try {
@@ -48,8 +50,14 @@ public class TCPServerThread extends Thread {
 				writer.write(res + "\n");
 				writer.flush();
 			}
-		} catch (Exception e) {
-			e.printStackTrace();
+		} catch (SocketException e) {
+			try {
+				logger.append("[INFO] client <" + socket.getInetAddress() + "> exception: " + e.getMessage());
+				System.out.println("client <" + socket.getInetAddress() + "> exception: " + e.getMessage());
+			} catch (IOException e1) {
+			}
+		} catch (IOException e1) {
+			e1.printStackTrace();
 		}
 	}
 

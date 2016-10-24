@@ -30,8 +30,10 @@ public class UDPServer extends Thread {
 		try {
 
 			logger.append("[INFO] starting UDP server at port " + port + "...");
+			System.out.println("starting UDP server at port " + port + "...");
 			DatagramSocket socket = new DatagramSocket(port);
 			logger.append("[INFO] UDP server started, waiting for client...");
+			System.out.println("UDP server started, waiting for client...");
 			byte[] receive = null;
 			byte[] send = null;
 			while (true) {

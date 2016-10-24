@@ -46,7 +46,7 @@ public class Operation {
 			}
 			if (op.equals("PUT")) {
 				map.put(key, value);
-				return "0";
+				return "0 put successfully";
 			}
 			if (op.equals("DELETE")) {
 				String res = map.get(key);
@@ -54,7 +54,7 @@ public class Operation {
 					throw new Exception("not found!");
 				}
 				map.remove(key);
-				return "0";
+				return "0 delete successfully";
 			}
 			return "0";
 		}

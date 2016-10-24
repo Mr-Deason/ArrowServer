@@ -1,7 +1,9 @@
 package server;
 
+import java.io.IOException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
+import java.util.Date;
 import java.util.HashMap;
 
 import javax.naming.Context;
@@ -28,18 +30,21 @@ public class RPCServer extends Thread{
 	@Override
 	public void run() {
 		try {
+			logger.append("[INFO] starting RPC server at port " + port + "...");
+			System.out.println("starting RPC server at port " + port + "...");
 			RPCInterf server = new RPCImp(map);
-			LocateRegistry.createRegistry(port); 
+			LocateRegistry.createRegistry(port);
 			Context context = new InitialContext();
 			context.rebind("rmi://localhost:" + port + "/RPCServer", server);
+			logger.append("[INFO] RPC server started in \"rmi://localhost:" + port + "/RPCServer" + "\" waiting for client...");
+			System.out.println("RPC server started in \"rmi://localhost:" + port + "/RPCServer" + "\" waiting for client...");
 			
-		} catch (RemoteException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (NamingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		} catch (Exception e) {
+			try {
+				logger.append("[ERROR] " + e.getMessage());
+			} catch (IOException e1) {
+				System.out.println(e.getMessage());
+			}
 		}
-		
 	}
 }

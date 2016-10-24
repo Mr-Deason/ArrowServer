@@ -26,17 +26,20 @@ public class TCPServer extends Thread {
 		try {
 			ServerSocket server = null;
 			logger.append(new Date(), "[INFO] starting TCP server at port " + port + "...");
+			System.out.println("starting TCP server at port " + port + "...");
 			server = new ServerSocket(port);
 			logger.append(new Date(), "[INFO] TCP server started, waiting for client...");
+			System.out.println("TCP server started, waiting for client...");
 			Socket socket = null;
 
 			while (true) {
 				try {
 					socket = server.accept();
 					logger.append(new Date(), "[INFO] client <" + socket.getInetAddress() + "> connected...");
+					System.out.println("client <" + socket.getInetAddress() + "> connected...");
 					new TCPServerThread(socket, map, logger);
 				} catch (Exception e) {
-					System.out.println("Error." + e);
+					logger.append("[ERROR] Exception: " + e.getMessage());
 				} 
 			}
 		} catch (Exception e) {
