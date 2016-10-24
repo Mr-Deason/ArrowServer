@@ -42,6 +42,7 @@ public class Server {
 		this.rpcPort = rpcPort;
 		
 		map = new HashMap<String, String>();
+		
 		try {
 			logger = new Logger("./server.log");
 		} catch (IOException e) {
