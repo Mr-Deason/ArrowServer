@@ -33,6 +33,8 @@ public class RPCServer extends Thread{
 			logger.append("[INFO] starting RPC server at port " + port + "...");
 			System.out.println("starting RPC server at port " + port + "...");
 			RPCInterf server = new RPCImp(map);
+			
+			//register RPC server
 			LocateRegistry.createRegistry(port);
 			Context context = new InitialContext();
 			context.rebind("rmi://localhost:" + port + "/RPCServer", server);

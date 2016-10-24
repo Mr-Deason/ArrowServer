@@ -16,13 +16,17 @@ public class Server {
 	
 	public static void main(String[] args) throws IOException {
 
+		//default TCP and UDP port is 18409
+		//default RPC port is 18410
 		int port = 18409;
 		int rpcPort = 18410;
-
+		
+		//verify arguments
 		if (args.length != 0 && args.length != 1) {
 			System.out.println("client can only accept 0 or 1 arguments !");
 			System.exit(-1);
 		}
+		
 		if (args.length == 1) {
 			try {
 				port = Integer.parseInt(args[0]);
@@ -53,6 +57,7 @@ public class Server {
 	
 	public void begin() {
 		
+		// create three threads to receive request from different protocol
 		new TCPServer(port, map, logger);
 		new UDPServer(port, map, logger);
 		new RPCServer(rpcPort, map, logger);

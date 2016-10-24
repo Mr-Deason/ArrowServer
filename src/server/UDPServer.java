@@ -31,15 +31,19 @@ public class UDPServer extends Thread {
 
 			logger.append("[INFO] starting UDP server at port " + port + "...");
 			System.out.println("starting UDP server at port " + port + "...");
+			
+			// create UDP datagram socket
 			DatagramSocket socket = new DatagramSocket(port);
 			logger.append("[INFO] UDP server started, waiting for client...");
 			System.out.println("UDP server started, waiting for client...");
+			
 			byte[] receive = null;
 			byte[] send = null;
 			while (true) {
 				receive = new byte[1024];
 				DatagramPacket packet = new DatagramPacket(receive, receive.length);
 
+				// receive datagram packet
 				socket.receive(packet);
 				String request = new String(packet.getData()).trim();
 				String response = null;
@@ -54,6 +58,8 @@ public class UDPServer extends Thread {
 					response = "-1 " + e.getMessage();
 					logger.append("[ERROR] request from <" + packet.getAddress() + ">: " + e.getMessage());
 				}
+				
+				// send response
 				send = response.getBytes();
 				DatagramPacket sendPacket = new DatagramPacket(send, send.length, packet.getAddress(),
 						packet.getPort());

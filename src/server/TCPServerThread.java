@@ -32,9 +32,12 @@ public class TCPServerThread extends Thread {
 	public void run() {
 
 		try {
+			// get socket I/O stream
 			BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 			BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
 			while (true) {
+				
+				// receive request
 				String line = reader.readLine();
 				logger.append("[INFO] received request \"" + line + "\" from <" + socket.getInetAddress() + '>');
 				String res = null;
@@ -47,6 +50,7 @@ public class TCPServerThread extends Thread {
 					logger.append("[ERROR] request from <" + socket.getInetAddress() + ">: " + e.getMessage());
 				}
 				
+				// send response
 				writer.write(res + "\n");
 				writer.flush();
 			}

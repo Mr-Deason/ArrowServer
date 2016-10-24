@@ -6,8 +6,11 @@ import java.util.HashMap;
 
 import interfaces.RPCInterf;
 
-public class RPCImp extends UnicastRemoteObject implements RPCInterf{
-	
+/*
+ * implement of RPC operation
+ */
+public class RPCImp extends UnicastRemoteObject implements RPCInterf {
+
 	HashMap<String, String> map = null;
 
 	public RPCImp(HashMap<String, String> map) throws RemoteException {
@@ -17,12 +20,12 @@ public class RPCImp extends UnicastRemoteObject implements RPCInterf{
 	public String get(String key) throws RemoteException {
 		return map.get(key);
 	}
-	
+
 	public int put(String key, String value) throws RemoteException {
 		map.put(key, value);
 		return 0;
 	}
-	
+
 	public int delete(String key) throws RemoteException {
 		if (!map.containsKey(key)) {
 			return -1;
