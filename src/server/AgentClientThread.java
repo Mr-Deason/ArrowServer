@@ -19,9 +19,9 @@ public class AgentClientThread extends Thread {
 	public Socket socket;
 	public Logger logger;
 	private ArrayList<ServerEntity> servers = null;
-	private int serverCnt = 1;
-	private int ackCnt;
-
+	private int serverCnt = 3;
+	public int ackCnt;
+	
 	private String resString;
 
 	public AgentClientThread(Socket socket, Logger logger, ArrayList<ServerEntity> servers) {
@@ -48,19 +48,26 @@ public class AgentClientThread extends Thread {
 					if (op.isGet()) {
 						int index = new Random().nextInt(servers.size());
 						ServerEntity server = servers.get(index);
-						
-						ackCnt = 1;
+
+						synchronized (this) {
+							ackCnt = 1;
+						}
 						new AgentServerThread(this, server.getAddress(), server.getPort(), index, op);
 						
 						System.out.println("attemp to connect server <" + server.getAddress() + ':'+ server.getPort() + ">");
-						
-						while (ackCnt > 0) {
-							
+
+						synchronized (this) {
+							while (ackCnt > 0) {
+								wait();
+							}
 						}
+						System.out.println("phase 1");
 						
 					} else {
-						ackCnt = serverCnt;
 
+						synchronized (this) {
+							ackCnt = servers.size();
+						}
 						ArrayList<AgentServerThread> serverThreads = new ArrayList<AgentServerThread>();
 
 						for (int i = 0; i < servers.size(); ++i) {
@@ -68,24 +75,42 @@ public class AgentClientThread extends Thread {
 							serverThreads.add(new AgentServerThread(this, serverEntity.getAddress(),
 									serverEntity.getPort(), i, op));
 						}
-
-						while (ackCnt > 0) {
-
+						
+						synchronized (this) {
+							while (ackCnt > 0) {
+								wait();
+							}
+							ackCnt = servers.size();
 						}
 
-						ackCnt = serverCnt;
+//						while (ackCnt > 0) {
+//							sleep(200);
+////							System.out.println("phase 1 wait " + ackCnt);
+//						}
+						System.out.println("phase 1");
+						
+						ackCnt = servers.size();
 						for (int i = 0; i < servers.size(); ++i) {
-							serverThreads.get(i).go();
+							go(serverThreads.get(i));
 						}
 
-						while (ackCnt > 0) {
-
+						synchronized (this) {
+							while (ackCnt > 0) {
+								wait();
+							}
 						}
+//						while (ackCnt > 0) {
+//
+//							sleep(200);
+////							System.out.println("phase 2 wait " + ackCnt);
+//						}
+						System.out.println("phase 2");
 					}
 					logger.append("[INFO] request from <" + socket.getInetAddress() + "> finished");
 				} catch (Exception e) {
 					resString = "-1 " + e.getMessage();
 					logger.append("[ERROR] request from <" + socket.getInetAddress() + ">: " + e.getMessage());
+					e.printStackTrace();
 				}
 
 				// send response
@@ -103,14 +128,16 @@ public class AgentClientThread extends Thread {
 		}
 	}
 
-	public void ack(int serverIndex) {
-		--ackCnt;
-	}
-
 	public void response(String res) {
 		resString = res;
 	}
 
+	public void go(AgentServerThread aThread) {
+		synchronized (aThread) {
+			aThread.canGo = true;
+			aThread.notifyAll();
+		}
+	}
 	public void timeout() {
 
 	}

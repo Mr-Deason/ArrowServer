@@ -22,7 +22,7 @@ public class Logger {
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss:SS");
 		String str = '[' + sdf.format(date) + "] " + msg + "\r\n";
 		System.out.print(str);
-		//log.writeBytes(str);
+		log.writeBytes(str);
 	}
 
 	public void close() throws IOException {
