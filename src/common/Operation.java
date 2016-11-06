@@ -7,6 +7,7 @@ public class Operation {
 	private String op = null;
 	private String key = null;
 	private String value = null;
+	private String cmd = null;
 
 	private static int cnt = 0;
 
@@ -21,12 +22,14 @@ public class Operation {
 				throw new Exception("malformed request!");
 			}
 			key = args[1].trim();
+			cmd = op + ',' + key;
 		} else {
 			if (!op.equals("PUT")) {
 				throw new Exception("malformed request!");
 			}
 			key = args[1].trim();
 			value = args[2].trim();
+			cmd = op + ',' + key + ',' + value;
 		}
 	}
 
@@ -35,7 +38,7 @@ public class Operation {
 		synchronized (map) {
 
 			if (cnt == 1) {
-//				Thread.sleep(10000);
+				// Thread.sleep(10000);
 			}
 			if (op.equals("GET")) {
 				String res = map.get(key);
@@ -84,4 +87,8 @@ public class Operation {
 		return op.equals("DELETE");
 	}
 
+	@Override
+	public String toString() {
+		return cmd;
+	}
 }

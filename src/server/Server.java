@@ -1,15 +1,23 @@
 package server;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.HashMap;
 
+import com.sun.xml.internal.ws.Closeable;
+
 import common.Logger;
+import common.Operation;
 
 public class Server {
 
 	private int port = 18409;
-	private int rpcPort = 18410;
+	private int agentPort = 18408;
+	private String agentHost = null;
 	private HashMap<String, String> map = null;
 
 	private Logger logger = null;
@@ -17,33 +25,39 @@ public class Server {
 	public static void main(String[] args) throws IOException {
 
 		//default TCP and UDP port is 18409
-		//default RPC port is 18410
 		int port = 18409;
-		int rpcPort = 18410;
+		String agentHost = "127.0.0.1";
 		
 		//verify arguments
-		if (args.length != 0 && args.length != 1) {
-			System.out.println("client can only accept 0 or 1 arguments !");
+		if (args.length > 2) {
+			System.out.println("Cannot accept more than 2 arguments !");
 			System.exit(-1);
 		}
 		
 		if (args.length == 1) {
 			try {
 				port = Integer.parseInt(args[0]);
-				rpcPort = port + 1;
+			} catch (NumberFormatException e) {
+				agentHost = args[0];
+			}
+		}
+		else if (args.length == 2) {
+			try {
+				agentHost = args[0];
+				port = Integer.parseInt(args[1]);
 			} catch (NumberFormatException e) {
 				System.out.println("arguments format error !");
 				System.exit(-1);
 			}
 		}
 		
-		Server server = new Server(port, rpcPort);
+		Server server = new Server(port, agentHost);
 		server.begin();
 	}
 
-	public Server(int port, int rpcPort) {
+	public Server(int port, String agentHost) {
 		this.port = port;
-		this.rpcPort = rpcPort;
+		this.agentHost = agentHost;
 		
 		map = new HashMap<String, String>();
 		
@@ -56,11 +70,62 @@ public class Server {
 	}
 	
 	public void begin() {
+		register();
 		
-		// create three threads to receive request from different protocol
-		new TCPServer(port, map, logger);
-		new UDPServer(port, map, logger);
-		new RPCServer(rpcPort, map, logger);
-	}
+		try {
+			ServerSocket server = new ServerSocket(port);
+			Socket socket = null;
+			while (true) {
+				socket = server.accept();
 
+				System.out.println("<" + socket.getInetAddress() + "> connected...");
+				BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+				BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
+				String str = reader.readLine();
+				System.out.println("receive \"" + str + "\"");
+				
+				writer.write("0");
+				writer.flush();
+				socket.close();
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	private void register() {
+
+		Socket socket = null;
+		BufferedReader reader = null;
+		BufferedWriter writer = null;
+
+		try {
+//			logger.append("[INFO] TCP client started");
+//			logger.append("[INFO] connect to " + hostname + ':' + port + "...");
+
+			// connect to server using TCP socket
+			socket = new Socket(agentHost, agentPort);
+//			logger.append("[INFO] connect successfully!");
+
+			// get socket I/O stream
+			reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+			writer = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		try {
+
+			// receive input and send to server
+			writer.write("register\n");
+			writer.flush();
+			logger.append("[INFO] registering on agent server");
+
+			// read response from server
+			String res = reader.readLine();
+			logger.append("[INFO] receive response \"" + res + "\" from server");
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
 }
