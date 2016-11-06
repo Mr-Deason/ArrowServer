@@ -61,7 +61,7 @@ public class AgentServer {
 				String str = reader.readLine();
 				String[] res = str.split(" ");
 				if (res[0].equals("register")) {
-					servers.add(new ServerEntity(socket.getInetAddress().toString(), Integer.parseInt(res[1])));
+					servers.add(new ServerEntity(socket.getInetAddress().getHostAddress(), Integer.parseInt(res[1])));
 					System.out.println("Server <" + socket.getInetAddress() + "> connected...");
 					writer.write("0\n");
 					writer.flush();

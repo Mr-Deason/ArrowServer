@@ -64,7 +64,8 @@ public class AgentServerThread extends Thread {
 					fa.ack(serverIndex);
 				}
 			}
-
+			writer.write("quit\n");
+			writer.flush();
 		} catch (UnknownHostException e) {
 			e.printStackTrace();
 		} catch (IOException e) {

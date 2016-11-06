@@ -19,7 +19,7 @@ public class AgentClientThread extends Thread {
 	public Socket socket;
 	public Logger logger;
 	private ArrayList<ServerEntity> servers = null;
-	private int serverCnt = 5;
+	private int serverCnt = 1;
 	private int ackCnt;
 
 	private String resString;
@@ -51,7 +51,9 @@ public class AgentClientThread extends Thread {
 						
 						ackCnt = 1;
 						new AgentServerThread(this, server.getAddress(), server.getPort(), index, op);
-
+						
+						System.out.println("attemp to connect server <" + server.getAddress() + ':'+ server.getPort() + ">");
+						
 						while (ackCnt > 0) {
 							
 						}

@@ -33,7 +33,7 @@ public class Operation {
 		}
 	}
 
-	public String exec(HashMap<String, String> map) throws Exception {
+	public String exec(HashMap<String, String> map) {
 		++cnt;
 		synchronized (map) {
 
@@ -43,7 +43,7 @@ public class Operation {
 			if (op.equals("GET")) {
 				String res = map.get(key);
 				if (res == null) {
-					throw new Exception("not found!");
+					return "-1 not found!";
 				}
 				return "0 " + res;
 			}
@@ -54,7 +54,7 @@ public class Operation {
 			if (op.equals("DELETE")) {
 				String res = map.get(key);
 				if (res == null) {
-					throw new Exception("not found!");
+					return "-1 not found!";
 				}
 				map.remove(key);
 				return "0 delete successfully";
