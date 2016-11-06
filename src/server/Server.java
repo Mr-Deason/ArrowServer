@@ -89,6 +89,7 @@ public class Server {
 						String str = reader.readLine();
 						System.out.println("receive \"" + str + "\"");
 						if (str.equals("quit")) {
+							System.out.println("break");
 							break;
 						}
 						Operation operation = new Operation(str);
@@ -102,9 +103,9 @@ public class Server {
 							
 							System.out.println("write 0");
 							str = reader.readLine();
-							if (res == null)
+							if (str == null)
 								System.out.println("ERROR!!!!");
-							System.out.println(res);
+							System.out.println(str);
 							if (str.equals("GO")) {
 								res = operation.exec(map);
 								writer.write(res + "\n");
