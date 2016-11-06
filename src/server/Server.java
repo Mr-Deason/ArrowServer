@@ -100,17 +100,20 @@ public class Server {
 							writer.write("0\n");
 							writer.flush();
 							
+							System.out.println("write 0");
 							str = reader.readLine();
+							if (res == null)
+								System.out.println("ERROR!!!!");
+							System.out.println(res);
 							if (str.equals("GO")) {
 								res = operation.exec(map);
 								writer.write(res + "\n");
 								writer.flush();
 							}
 						}
-					} catch (IOException e) {
-						break;
 					} catch (Exception e) {
 						// TODO Auto-generated catch block
+						System.out.println(e.getMessage());
 						e.printStackTrace();
 					}
 
