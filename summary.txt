@@ -5,12 +5,17 @@ Yue Shen 1668045
 Kuangdi Yu 1667997
 Haoming Li 1451488
 
+Environment:
 Java
 
 Assignment Overview:
+We decide to develop project 2 using TCP protocol. Based on the Client.class and Server.class in project 1, we add an AgentServer.class as an agent between clients and servers, since we now have more than one servers, which need an agent to communicate with each other.When a client sends a request (key-value operation), the agent receives the request and decode it. If the operation is GET, the agent selects a random server in 5 servers, then sends the request, receives the response and sends the response to the client. Or if the operation is PUT or DELETE, we should use 2-phase commit to make sure the consistency of all servers. In phase 1, the agent sends the request to all servers, but servers don't execute the operation. Instead, each of them returns an ACK to the agent, representing they have received the request. Once the agent receives all 5 ACKs, it enters phase 2. In this phase, the agent sends 5 GO messages to every server. When a server receives GO, it starts to execute the request, and also return an ACK and result (if needed) after operation finished. The agent waits for all 5 ACKs then return the result to the client (if needed).
 
 Technical Impression:
+1. multi-threads. Once the agent receives a TCP request from a client, it creates a new thread to handle the socket. In this new thread, we use 2-phase commit, which means we create extra new thread(s) to contact with server(s).
+2. synchronized threads. In 2-phase commit, agent's current thread creates new thread(s) to contact server(s). This current thread should wait until its son thread(s) receive(s) ACK(s) and notify current thread. Also, there are more circumstances where synchronized threads are needed.
 
 Project Contributions
 Yue Shen        Server implement, transaction time testing, summary report
+Kuangdi Yu      AgentServer implement, total program testing & modification
 Haoming Li      Client implement, summary report
