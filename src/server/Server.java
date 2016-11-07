@@ -24,8 +24,7 @@ public class Server {
 
 	public static void main(String[] args) throws IOException {
 
-		// default TCP and UDP port is 18409
-		int port = 18408;
+		int agentPort = 18409;
 		String agentHost = "127.0.0.1";
 
 		// verify arguments
@@ -36,26 +35,26 @@ public class Server {
 
 		if (args.length == 1) {
 			try {
-				port = Integer.parseInt(args[0]);
+				agentPort = Integer.parseInt(args[0]);
 			} catch (NumberFormatException e) {
 				agentHost = args[0];
 			}
 		} else if (args.length == 2) {
 			try {
 				agentHost = args[0];
-				port = Integer.parseInt(args[1]);
+				agentPort = Integer.parseInt(args[1]);
 			} catch (NumberFormatException e) {
 				System.out.println("arguments format error !");
 				System.exit(-1);
 			}
 		}
 
-		Server server = new Server(port, agentHost);
+		Server server = new Server(agentPort, agentHost);
 		server.begin();
 	}
 
-	public Server(int port, String agentHost) {
-		this.port = port;
+	public Server(int agentPort, String agentHost) {
+		this.agentPort = agentPort;
 		this.agentHost = agentHost;
 
 		map = new HashMap<String, String>();
@@ -77,7 +76,7 @@ public class Server {
 			while (true) {
 				socket = server.accept();
 
-				System.out.println("<" + socket.getInetAddress() + "> connected...");
+//				System.out.println("<" + socket.getInetAddress() + "> connected...");
 				BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 				BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
 				

@@ -1,0 +1,16 @@
+Project 2
+
+Team Members:
+Yue Shen 1668045
+Kuangdi Yu 1667997
+Haoming Li 1451488
+
+Java
+
+Assignment Overview:
+
+Technical Impression:
+
+Project Contributions
+Yue Shen        Server implement, transaction time testing, summary report
+Haoming Li      Client implement, summary report

@@ -10,7 +10,6 @@ import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.Random;
 
-
 import common.Logger;
 import common.Operation;
 
@@ -21,7 +20,7 @@ public class AgentClientThread extends Thread {
 	private ArrayList<ServerEntity> servers = null;
 	private int serverCnt = 3;
 	public int ackCnt;
-	
+
 	private String resString;
 
 	public AgentClientThread(Socket socket, Logger logger, ArrayList<ServerEntity> servers) {
@@ -35,14 +34,14 @@ public class AgentClientThread extends Thread {
 	public void run() {
 
 		try {
-			// get socket I/O stream
 			BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 			BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
 			while (true) {
 
 				// receive request
 				String line = reader.readLine();
-//				logger.append("[INFO] received request \"" + line + "\" from <" + socket.getInetAddress() + '>');
+				// logger.append("[INFO] received request \"" + line + "\" from
+				// <" + socket.getInetAddress() + '>');
 				try {
 					Operation op = new Operation(line);
 					if (op.isGet()) {
@@ -53,15 +52,13 @@ public class AgentClientThread extends Thread {
 							ackCnt = 1;
 						}
 						new AgentServerThread(this, server.getAddress(), server.getPort(), index, op);
-						
-//						System.out.println("attemp to connect server <" + server.getAddress() + ':'+ server.getPort() + ">");
 
 						synchronized (this) {
 							while (ackCnt > 0) {
 								wait();
 							}
 						}
-						
+
 					} else {
 
 						synchronized (this) {
@@ -74,27 +71,30 @@ public class AgentClientThread extends Thread {
 							serverThreads.add(new AgentServerThread(this, serverEntity.getAddress(),
 									serverEntity.getPort(), i, op));
 						}
-						
+
 						synchronized (this) {
 							while (ackCnt > 0) {
+								// wait for phase 1 ACKs
 								wait();
 							}
 							ackCnt = servers.size();
 						}
 
-						
 						ackCnt = servers.size();
 						for (int i = 0; i < servers.size(); ++i) {
+							// send GO
 							go(serverThreads.get(i));
 						}
 
 						synchronized (this) {
 							while (ackCnt > 0) {
+								// wait for phase 2 ACKs
 								wait();
 							}
 						}
 					}
-//					logger.append("[INFO] request from <" + socket.getInetAddress() + "> finished");
+					// logger.append("[INFO] request from <" +
+					// socket.getInetAddress() + "> finished");
 				} catch (Exception e) {
 					resString = "-1 " + e.getMessage();
 					logger.append("[ERROR] request from <" + socket.getInetAddress() + ">: " + e.getMessage());
@@ -108,7 +108,6 @@ public class AgentClientThread extends Thread {
 		} catch (SocketException e) {
 			try {
 				logger.append("[INFO] client <" + socket.getInetAddress() + "> exception: " + e.getMessage());
-				System.out.println("client <" + socket.getInetAddress() + "> exception: " + e.getMessage());
 			} catch (IOException e1) {
 			}
 		} catch (IOException e1) {
@@ -126,6 +125,7 @@ public class AgentClientThread extends Thread {
 			aThread.notifyAll();
 		}
 	}
+
 	public void timeout() {
 
 	}
