@@ -15,6 +15,9 @@ Technical Impression:
 1. multi-threads. Once the agent receives a TCP request from a client, it creates a new thread to handle the socket. In this new thread, we use 2-phase commit, which means we create extra new thread(s) to contact with server(s).
 2. synchronized threads. In 2-phase commit, agent's current thread creates new thread(s) to contact server(s). This current thread should wait until its son thread(s) receive(s) ACK(s) and notify current thread. Also, there are more circumstances where synchronized threads are needed.
 
+To do:
+Add timeout mechanism.
+
 Project Contributions
 Yue Shen        Server implement, transaction time testing, summary report
 Kuangdi Yu      AgentServer implement, total program testing & modification
