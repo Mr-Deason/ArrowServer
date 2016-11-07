@@ -9,7 +9,6 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.HashMap;
 
-import com.sun.xml.internal.ws.Closeable;
 
 import common.Logger;
 import common.Operation;
@@ -87,9 +86,7 @@ public class Server {
 					try {
 
 						String str = reader.readLine();
-						System.out.println("receive \"" + str + "\"");
 						if (str.equals("quit")) {
-							System.out.println("break");
 							break;
 						}
 						Operation operation = new Operation(str);
@@ -101,11 +98,7 @@ public class Server {
 							writer.write("0\n");
 							writer.flush();
 							
-							System.out.println("write 0");
 							str = reader.readLine();
-							if (str == null)
-								System.out.println("ERROR!!!!");
-							System.out.println(str);
 							if (str.equals("GO")) {
 								res = operation.exec(map);
 								writer.write(res + "\n");
@@ -114,7 +107,6 @@ public class Server {
 						}
 					} catch (Exception e) {
 						// TODO Auto-generated catch block
-						System.out.println(e.getMessage());
 						e.printStackTrace();
 					}
 

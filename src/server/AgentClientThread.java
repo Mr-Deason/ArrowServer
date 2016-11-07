@@ -42,7 +42,7 @@ public class AgentClientThread extends Thread {
 
 				// receive request
 				String line = reader.readLine();
-				logger.append("[INFO] received request \"" + line + "\" from <" + socket.getInetAddress() + '>');
+//				logger.append("[INFO] received request \"" + line + "\" from <" + socket.getInetAddress() + '>');
 				try {
 					Operation op = new Operation(line);
 					if (op.isGet()) {
@@ -54,14 +54,13 @@ public class AgentClientThread extends Thread {
 						}
 						new AgentServerThread(this, server.getAddress(), server.getPort(), index, op);
 						
-						System.out.println("attemp to connect server <" + server.getAddress() + ':'+ server.getPort() + ">");
+//						System.out.println("attemp to connect server <" + server.getAddress() + ':'+ server.getPort() + ">");
 
 						synchronized (this) {
 							while (ackCnt > 0) {
 								wait();
 							}
 						}
-						System.out.println("phase 1");
 						
 					} else {
 
@@ -83,11 +82,6 @@ public class AgentClientThread extends Thread {
 							ackCnt = servers.size();
 						}
 
-//						while (ackCnt > 0) {
-//							sleep(200);
-////							System.out.println("phase 1 wait " + ackCnt);
-//						}
-						System.out.println("phase 1");
 						
 						ackCnt = servers.size();
 						for (int i = 0; i < servers.size(); ++i) {
@@ -99,14 +93,8 @@ public class AgentClientThread extends Thread {
 								wait();
 							}
 						}
-//						while (ackCnt > 0) {
-//
-//							sleep(200);
-////							System.out.println("phase 2 wait " + ackCnt);
-//						}
-						System.out.println("phase 2");
 					}
-					logger.append("[INFO] request from <" + socket.getInetAddress() + "> finished");
+//					logger.append("[INFO] request from <" + socket.getInetAddress() + "> finished");
 				} catch (Exception e) {
 					resString = "-1 " + e.getMessage();
 					logger.append("[ERROR] request from <" + socket.getInetAddress() + ">: " + e.getMessage());

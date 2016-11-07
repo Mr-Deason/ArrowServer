@@ -48,12 +48,12 @@ public class AgentServerThread extends Thread {
 			if (operation.isGet()) {
 				fa.response(res);
 				ack();
-				System.out.println(serverAdd + " ACK");
+//				System.out.println(serverAdd + " ACK");
 			} else {
 
 				if (res.equals("0")) {
 					ack();
-					System.out.println(serverAdd + " ACK");
+//					System.out.println(serverAdd + " ACK");
 					synchronized (this) {
 						while (!canGo) {
 							wait();
@@ -62,14 +62,14 @@ public class AgentServerThread extends Thread {
 
 					writer.write("GO\n");
 					writer.flush();
-					System.out.println(serverAdd + " GO");
+//					System.out.println(serverAdd + " GO");
 
 					res = reader.readLine();
 
-					System.out.println(serverAdd + " response: " + res);
+//					System.out.println(serverAdd + " response: " + res);
 					fa.response(res);
 					ack();
-					System.out.println(serverAdd + " ACK");
+//					System.out.println(serverAdd + " ACK");
 				}
 			}
 			writer.write("quit\n");
