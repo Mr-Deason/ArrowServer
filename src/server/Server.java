@@ -57,9 +57,10 @@ public class Server {
 	
 	public void begin() {
 		
+		// create three threads to receive request from different protocol
+		new TCPServer(port, map, logger);
+		new UDPServer(port, map, logger);
 		new RPCServer(rpcPort, map, logger);
-		new Acceptor(rpcPort+1, logger);
-		new Learner(rpcPort+2, map, logger);
 	}
 
 }
