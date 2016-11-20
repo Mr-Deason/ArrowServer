@@ -3,6 +3,7 @@ package server;
 import java.io.IOException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 
@@ -15,14 +16,17 @@ import implement.RPCImp;
 import interfaces.RPCInterf;
 
 public class RPCServer extends Thread{
+	
+	private Paxos paxos;
 	private int port;
-	private HashMap<String, String> map = null;
+	private ArrayList<ServerEntity> servers;
 	
 	private Logger logger = null;
 	
-	public RPCServer(int port, HashMap<String, String> map, Logger logger) {
+	public RPCServer(Paxos paxos, int port, ArrayList<ServerEntity> servers, Logger logger) {
+		this.paxos = paxos;
 		this.port = port;
-		this.map = map;
+		this.servers = servers;
 		this.logger = logger;
 		this.start();
 	}
@@ -32,7 +36,7 @@ public class RPCServer extends Thread{
 		try {
 			logger.append("[INFO] starting RPC server at port " + port + "...");
 			System.out.println("starting RPC server at port " + port + "...");
-			RPCInterf server = new RPCImp(map);
+			RPCInterf server = new RPCImp(paxos, logger);
 			
 			//register RPC server
 			LocateRegistry.createRegistry(port);

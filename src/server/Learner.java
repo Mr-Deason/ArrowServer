@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.rmi.registry.LocateRegistry;
 import java.util.HashMap;
 
+import javax.lang.model.element.Parameterizable;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 
@@ -13,12 +14,15 @@ import interfaces.RPCInterf;
 
 public class Learner extends Thread {
 
+	private Paxos paxos;
+	
 	private int port;
 	private HashMap<String, String> map = null;
 	
 	private Logger logger = null;
 	
-	public Learner(int port, HashMap<String, String> map, Logger logger) {
+	public Learner(Paxos paxos, int port, HashMap<String, String> map, Logger logger) {
+		this.paxos = paxos;
 		this.port = port;
 		this.map = map;
 		this.logger = logger;

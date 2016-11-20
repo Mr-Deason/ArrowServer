@@ -8,16 +8,20 @@ import javax.naming.Context;
 import javax.naming.InitialContext;
 
 import common.Logger;
+import common.Operation;
 import implement.RPCImp;
 import interfaces.RPCInterf;
 
 public class Proposer extends Thread {
 
+	public Paxos paxos;
+	
 	private int port;
 	
 	private Logger logger = null;
 	
-	public Proposer(int port, Logger logger) {
+	public Proposer(Paxos paxos, int port, Logger logger) {
+		this.paxos = paxos;
 		this.port = port;
 		this.logger = logger;
 		this.start();
@@ -26,8 +30,6 @@ public class Proposer extends Thread {
 	@Override
 	public void run() {
 		try {
-			logger.append("[INFO] starting RPC server at port " + port + "...");
-			System.out.println("starting RPC server at port " + port + "...");
 			RPCInterf server = new RPCImp(map);
 			
 			//register RPC server

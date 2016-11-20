@@ -1,8 +1,10 @@
 package server;
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.net.ServerSocket;
-import java.net.Socket;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Scanner;
 
 import common.Logger;
 
@@ -11,6 +13,7 @@ public class Server {
 	private int port = 18409;
 	private int rpcPort = 18410;
 	private HashMap<String, String> map = null;
+	private ArrayList<ServerEntity> servers = null;
 
 	private Logger logger = null;
 	
@@ -57,9 +60,22 @@ public class Server {
 	
 	public void begin() {
 		
-		new RPCServer(rpcPort, map, logger);
-		new Acceptor(rpcPort+1, logger);
-		new Learner(rpcPort+2, map, logger);
+		servers = new ArrayList<ServerEntity>();
+		File hosts = new File("./hosts.txt");
+		try {
+			Scanner scanner = new Scanner(hosts);
+			while(scanner.hasNextLine()) {
+				String[] ss = scanner.nextLine().split(" ");
+				servers.add(new ServerEntity(ss[0], Integer.parseInt(ss[1])));
+			}
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
+		
+		new RPCServer(rpcPort, servers, logger);
+		new Proposer(rpcPort+1, logger);
+		new Acceptor(rpcPort+2, logger);
+		new Learner(rpcPort+3, map, logger);
 	}
 
 }

@@ -12,11 +12,14 @@ import interfaces.RPCInterf;
 
 public class Acceptor extends Thread {
 
+	private Paxos paxos;
+	
 	private int port;
 	
 	private Logger logger = null;
 	
-	public Acceptor(int port, Logger logger) {
+	public Acceptor(Paxos paxos, int port, Logger logger) {
+		this.paxos = paxos;
 		this.port = port;
 		this.logger = logger;
 		this.start();
