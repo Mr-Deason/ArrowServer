@@ -26,6 +26,9 @@ public class LearnerImp extends UnicastRemoteObject implements LearnerInterface 
 
 		Operation operation;
 		try {
+			
+			logger.append("[INFO] commit");
+			
 			paxos.setAcceptV(null);
 			operation = new Operation(op);
 			return operation.exec(map);
