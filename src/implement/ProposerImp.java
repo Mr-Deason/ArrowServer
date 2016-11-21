@@ -12,7 +12,7 @@ public class ProposerImp extends UnicastRemoteObject implements ProposerInterfac
 	private Paxos paxos;
 	private Logger logger;
 	
-	protected ProposerImp(Paxos paxos, Logger logger) throws RemoteException {
+	public ProposerImp(Paxos paxos, Logger logger) throws RemoteException {
 		this.paxos = paxos;
 		this.logger = logger;
 	}
@@ -20,30 +20,44 @@ public class ProposerImp extends UnicastRemoteObject implements ProposerInterfac
 	@Override
 	public void prepareOk(int n, String v) throws RemoteException {
 		if (v != null) {
-			paxos.setOp(v);
+			paxos.setAcceptV(v);
 		}
 		paxos.receivePrepareOk();
-		if (paxos.majorityPrepareOk()) {
-			
+		synchronized(paxos) {
+			if (paxos.majorityPrepareOk()) {
+				paxos.notifyAll();
+			}
 		}
 	}
 
 	@Override
 	public void prepareReject() throws RemoteException {
-		// TODO Auto-generated method stub
-
+		paxos.receivePrepareReject();
+		synchronized (paxos) {
+			if (paxos.majorityPrepareReject()) {
+				paxos.notifyAll();
+			}
+		}
 	}
 
 	@Override
-	public void acceptOk(int n, String v) throws RemoteException {
-		// TODO Auto-generated method stub
-
+	public void acceptOk() throws RemoteException {
+		paxos.receiveAcceptOk();
+		synchronized(paxos) {
+			if (paxos.majorityAcceptOk()) {
+				paxos.notifyAll();
+			}
+		}
 	}
 
 	@Override
 	public void acceptReject() throws RemoteException {
-		// TODO Auto-generated method stub
-
+		paxos.receiveAcceptReject();
+		synchronized(paxos) {
+			if (paxos.majorityAcceptReject()) {
+				notifyAll();
+			}
+		}
 	}
 
 }

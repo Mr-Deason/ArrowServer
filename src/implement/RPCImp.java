@@ -1,7 +1,11 @@
 package implement;
 
+import java.net.MalformedURLException;
+import java.rmi.Naming;
+import java.rmi.NotBoundException;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
+import java.rmi.server.ServerNotActiveException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -9,9 +13,11 @@ import java.util.Random;
 
 import common.Logger;
 import common.Operation;
+import interfaces.LearnerInterface;
+import interfaces.ProposerInterface;
 import interfaces.RPCInterf;
 import server.Paxos;
-import server.Proposer;
+import server.Server;
 import server.ServerEntity;
 import sun.net.www.content.text.plain;
 
@@ -29,20 +35,15 @@ public class RPCImp extends UnicastRemoteObject implements RPCInterf {
 	}
 
 	public String request(String op) throws RemoteException{
-		Operation operation = null;
-		try {
-			operation = new Operation(op);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		
-		if (operation.isGet()) {
-			int index = new Random().nextInt(paxos.getServers().size());
-			//
-		}
-		else {
-			
-		}
-		return null;
+//		try {
+//			System.out.println("receive request from <" + getClientHost() + ">: " + op);
+//		} catch (ServerNotActiveException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+		paxos.begin(op);
+		paxos.prepare();
+		paxos.accept();
+		return paxos.commit();
 	}
 }

@@ -31,33 +31,26 @@ public class Operation {
 	}
 
 	public String exec(HashMap<String, String> map) throws Exception {
-		++cnt;
-		synchronized (map) {
-
-			if (cnt == 1) {
-//				Thread.sleep(10000);
+		if (op.equals("GET")) {
+			String res = map.get(key);
+			if (res == null) {
+				return "-1 not found!";
 			}
-			if (op.equals("GET")) {
-				String res = map.get(key);
-				if (res == null) {
-					throw new Exception("not found!");
-				}
-				return "0 " + res;
-			}
-			if (op.equals("PUT")) {
-				map.put(key, value);
-				return "0 put successfully";
-			}
-			if (op.equals("DELETE")) {
-				String res = map.get(key);
-				if (res == null) {
-					throw new Exception("not found!");
-				}
-				map.remove(key);
-				return "0 delete successfully";
-			}
-			return "0";
+			return "0 " + res;
 		}
+		if (op.equals("PUT")) {
+			map.put(key, value);
+			return "0 put successfully";
+		}
+		if (op.equals("DELETE")) {
+			String res = map.get(key);
+			if (res == null) {
+				return "-1 not found!";
+			}
+			map.remove(key);
+			return "0 delete successfully";
+		}
+		return "0";
 	}
 
 	public String getOp() {

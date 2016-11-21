@@ -12,7 +12,7 @@ public interface ProposerInterface extends Remote  {
 	
 	public void prepareReject() throws RemoteException;
 	
-	public void acceptOk(int n, String v) throws RemoteException;
+	public void acceptOk() throws RemoteException;
 	
 	public void acceptReject() throws RemoteException;
 }
